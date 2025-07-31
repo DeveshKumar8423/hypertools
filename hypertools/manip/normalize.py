@@ -7,12 +7,18 @@ from .common import Manipulator
 
 
 # noinspection PyShadowingBuiltins
-@dw.decorate.apply_stacked
 def fitter(data, axis=0, min=0, max=1):
+    """
+    Fit normalization parameters for data scaling.
+    Fixed for datawrangler 0.4.0 compatibility - no longer uses @dw.decorate.apply_stacked
+    """
     assert min < max, ValueError('minimum must be strictly less than maximum')
 
     if axis == 1:
-        return dw.core.update_dict(fitter(data.T, axis=0, min=min, max=max), {'transpose': True})
+        # Recursively handle transpose case
+        result = fitter(data.T, axis=0, min=min, max=max)
+        result['transpose'] = True
+        return result
     elif axis != 0:
         raise ValueError('axis must be either 0 or 1')
 
@@ -30,8 +36,11 @@ def fitter(data, axis=0, min=0, max=1):
 
 
 # noinspection DuplicatedCode
-@dw.decorate.apply_stacked
 def transformer(data, **kwargs):
+    """
+    Transform data using fitted normalization parameters.
+    Fixed for datawrangler 0.4.0 compatibility - no longer uses @dw.decorate.apply_stacked
+    """
     transpose = kwargs.pop('transpose', False)
     assert 'axis' in kwargs.keys(), ValueError('Must specify axis')
 

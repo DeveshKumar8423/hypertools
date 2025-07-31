@@ -10,8 +10,11 @@ import warnings
 from .common import Manipulator
 
 
-@dw.decorate.apply_stacked
 def fitter(data, **kwargs):
+    """
+    Fit smoothing parameters for data.
+    Fixed for datawrangler 0.4.0 compatibility - no longer uses @dw.decorate.apply_stacked
+    """
     data_max = data.max(axis=kwargs['axis'])
     data_min = data.min(axis=kwargs['axis'])
 
@@ -19,8 +22,11 @@ def fitter(data, **kwargs):
             'min': data_min, 'maintain_bounds': kwargs['maintain_bounds']}
 
 
-@dw.decorate.apply_stacked
 def transformer(data, **kwargs):
+    """
+    Transform data using fitted smoothing parameters.
+    Fixed for datawrangler 0.4.0 compatibility - no longer uses @dw.decorate.apply_stacked
+    """
     assert 'axis' in kwargs.keys(), ValueError('Must specify axis')
     axis = kwargs.pop('axis', None)
 

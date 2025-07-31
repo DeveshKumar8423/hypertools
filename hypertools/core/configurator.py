@@ -3,11 +3,19 @@ import datawrangler as dw
 import os
 from configparser import ConfigParser
 
-from pkg_resources import get_distribution
+import pkg_resources
+try:
+    from importlib.metadata import version
+except ImportError:
+    # Fallback for Python < 3.8
+    from pkg_resources import get_distribution
+    def version(package_name):
+        return get_distribution(package_name).version
+
 from .shared import RobustDict
 
 
-__version__ = get_distribution('hypertools')
+__version__ = version('hypertools')
 
 
 def get_default_options(fname=None):
