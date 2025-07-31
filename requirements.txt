@@ -1,15 +1,29 @@
-pydata-wrangler>=0.2.2
-seaborn>=0.8.1
-requests
-dill
-six
-numpy>=1.19.5
-scikit-learn
-pandas
-scipy
-umap-learn
-matplotlib>=3.2.2
-plotly>=4.6.0
-moviepy
-kaleido
-configparser
+# Hypertools Dependencies - Updated for Modern Compatibility
+# Data manipulation and wrangling
+pydata-wrangler>=0.4.0  # Updated to use latest version with Polars backend support
+pandas>=1.3.0,<3.0.0    # Broad compatibility, exclude pandas 3.0 breaking changes
+numpy>=1.19.0,<2.0.0    # Stable numpy 1.x series
+
+# Machine Learning
+scikit-learn>=1.0.0     # Modern sklearn with consistent API
+
+# Scientific computing  
+scipy>=1.7.0            # Compatible with modern numpy/pandas
+
+# Dimensionality reduction
+umap-learn>=0.5.0       # Stable UMAP version
+
+# Plotting and visualization
+matplotlib>=3.3.0       # Modern matplotlib with better performance
+plotly>=5.0.0           # Modern plotly with improved features
+seaborn>=0.11.0         # Compatible with matplotlib 3.x
+
+# Animation and media
+moviepy>=1.0.0          # For animation export
+kaleido>=0.2.1          # For static image export from plotly
+
+# Utilities
+requests>=2.25.0        # HTTP requests
+dill>=0.3.0             # Serialization
+six>=1.15.0             # Python 2/3 compatibility (legacy)
+configparser>=5.0.0     # Configuration parsing

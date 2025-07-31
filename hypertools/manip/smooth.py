@@ -55,8 +55,12 @@ def transformer(data, **kwargs):
         smoothed[c] = savgol_filter(data[c].values, kwargs['kernel_width'], kwargs['order'])
 
         if kwargs['maintain_bounds']:
-            smoothed[c].loc[smoothed[c] > kwargs['max'][c]] = kwargs['max'][c]
-            smoothed[c].loc[smoothed[c] < kwargs['min'][c]] = kwargs['min'][c]
+            # Fix pandas ChainedAssignmentError by using proper .loc indexing
+            max_mask = smoothed[c] > kwargs['max'][c]
+            min_mask = smoothed[c] < kwargs['min'][c]
+            
+            smoothed.loc[max_mask, c] = kwargs['max'][c]
+            smoothed.loc[min_mask, c] = kwargs['min'][c]
 
     return smoothed
 
