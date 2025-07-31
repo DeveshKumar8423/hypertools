@@ -284,13 +284,36 @@ class Animator:
         if type(x) is list:
             return [self.get_window(i, w_start, w_end) for i in x]
 
+        # Fixed sliding window logic for proper data progression
         # Get the actual time range for this window
         start_time = self.indices[int(w_start)]
         end_time = self.indices[int(w_end)]
         
-        # Filter data by time index (not integer position)
-        mask = (x.index >= start_time) & (x.index <= end_time)
-        return x[mask]
+        # For discrete data, we need to be more inclusive in our window selection
+        # to ensure we capture data points as the window slides through timepoints
+        if hasattr(x.index, 'dtype') and np.issubdtype(x.index.dtype, np.integer):
+            # For integer indices (discrete timepoints), use inclusive range
+            # and expand window slightly to catch adjacent timepoints
+            actual_data_indices = sorted(x.index.unique())
+            
+            # Find the range of actual data indices that fall within our time window
+            # Allow for small floating point tolerance
+            tolerance = 0.1
+            included_indices = [idx for idx in actual_data_indices 
+                              if start_time - tolerance <= idx <= end_time + tolerance]
+            
+            if included_indices:
+                mask = x.index.isin(included_indices)
+                return x[mask]
+            else:
+                # If no data in strict window, find the closest timepoint
+                closest_idx = min(actual_data_indices, key=lambda idx: abs(idx - (start_time + end_time) / 2))
+                mask = x.index == closest_idx
+                return x[mask]
+        else:
+            # For continuous time indices, use the original filtering
+            mask = (x.index >= start_time) & (x.index <= end_time)
+            return x[mask]
 
     @classmethod
     def get_datadict(cls, data, mode='markers', **kwargs):
