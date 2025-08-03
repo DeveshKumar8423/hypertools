@@ -171,7 +171,10 @@ def get_plotly_shape(x, **kwargs):
     color = kwargs.pop('color', defaults['color'])
 
     width = kwargs.pop('linewidth', defaults['linewidth'])
-    size = kwargs.pop('markersize', defaults['markersize'])
+    
+    # FIXED: Handle both 'size' and 'markersize' parameters for user convenience
+    size = kwargs.pop('size', kwargs.pop('markersize', defaults['markersize']))
+    
     symbol = kwargs.pop('marker', defaults['marker'])
     edgewidth = kwargs.pop('markeredgewidth', None)
 
@@ -182,6 +185,9 @@ def get_plotly_shape(x, **kwargs):
     facecolor = kwargs.pop('facecolor', None)
     if facecolor is None:
         facecolor = color
+
+    # FIXED: Handle 'alpha' parameter for opacity  
+    alpha = kwargs.pop('alpha', kwargs.pop('opacity', 1.0))
 
     dash = kwargs.pop('dash', None)
 
@@ -197,6 +203,9 @@ def get_plotly_shape(x, **kwargs):
 
     shape['x'] = flatten(x[:, 0])
     shape['y'] = flatten(x[:, 1])
+    
+    # FIXED: Apply opacity to the appropriate trace level for both 2D and 3D
+    shape['opacity'] = alpha
 
     if x.shape[1] == 2:
         return go.Scatter(**dw.core.update_dict(kwargs, shape), mode=mode)
@@ -204,7 +213,7 @@ def get_plotly_shape(x, **kwargs):
         shape['z'] = flatten(x[:, 2])
         return go.Scatter3d(**dw.core.update_dict(kwargs, shape), mode=mode)
     else:
-        raise ValueError(f'data must be 2D or 3D (given: {data.shape[1]}D)')
+        raise ValueError(f'data must be 2D or 3D (given: {x.shape[1]}D)')
 
 
 def static_plot(data, **kwargs):

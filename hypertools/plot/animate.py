@@ -158,7 +158,7 @@ class Animator:
         transition_duration = min(frame_duration * 0.3, 100)  # Smooth but not too slow
         
         fig['layout']['updatemenus'] = [{'buttons': [{
-            'label': ' ▶',  # play button
+            'label': ' Play',  # play button
             'args': [None, {'frame': {'duration': frame_duration, 'redraw': False},  # Disable redraw
                             'fromcurrent': True,
                             'transition': {'duration': transition_duration}}],  # Add smooth transition
@@ -317,14 +317,40 @@ class Animator:
 
     @classmethod
     def get_datadict(cls, data, mode='markers', **kwargs):
+        # FIXED: Process plotly parameters before creating objects
+        # Extract and convert problematic parameters like size/alpha  
+        processed_kwargs = kwargs.copy()
+        
+        # Handle 'size' parameter for plotly compatibility
+        if 'size' in processed_kwargs:
+            if 'marker' not in processed_kwargs:
+                processed_kwargs['marker'] = {}
+            if isinstance(processed_kwargs['marker'], dict):
+                processed_kwargs['marker']['size'] = processed_kwargs.pop('size')
+            else:
+                processed_kwargs.pop('size')  # Remove if marker isn't a dict
+                
+        # Handle 'alpha' parameter for plotly compatibility  
+        if 'alpha' in processed_kwargs:
+            processed_kwargs['opacity'] = processed_kwargs.pop('alpha')
+            
+        # Handle 'markersize' parameter
+        if 'markersize' in processed_kwargs:
+            if 'marker' not in processed_kwargs:
+                processed_kwargs['marker'] = {}
+            if isinstance(processed_kwargs['marker'], dict):
+                processed_kwargs['marker']['size'] = processed_kwargs.pop('markersize')
+            else:
+                processed_kwargs.pop('markersize')
+        
         if type(data) is list:
-            return [cls.get_datadict(d, mode=mode, **kwargs)[0] for d in data]
+            return [cls.get_datadict(d, mode=mode, **processed_kwargs)[0] for d in data]
         elif data.shape[1] == 2:
             return [go.Scatter(x=flatten(data.values[:, 0]), y=flatten(data.values[:, 1]), 
-                              mode=mode, **kwargs)]
+                              mode=mode, **processed_kwargs)]
         elif data.shape[1] == 3:
             return [go.Scatter3d(x=flatten(data.values[:, 0]), y=flatten(data.values[:, 1]),
-                                 z=flatten(data.values[:, 2]), mode=mode, **kwargs)]
+                                 z=flatten(data.values[:, 2]), mode=mode, **processed_kwargs)]
         else:
             raise ValueError(f'data must be either 2D or 3D; given: {data.shape[1]}D')
 

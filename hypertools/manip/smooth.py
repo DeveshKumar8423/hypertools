@@ -45,6 +45,16 @@ def transformer(data, **kwargs):
         kwargs['kernel_width'] += 1
     assert kwargs['kernel_width'] > 0, ValueError('smoothing kernel width must be a positive odd integer')
 
+    # FIXED: Validate polynomial order against kernel width (required by savgol_filter)
+    if kwargs['order'] >= kwargs['kernel_width']:
+        max_order = kwargs['kernel_width'] - 1
+        warnings.warn(f'Reducing polynomial order from {kwargs["order"]} to {max_order} '
+                     f'(must be less than kernel_width={kwargs["kernel_width"]})')
+        kwargs['order'] = max_order
+    
+    assert kwargs['order'] >= 0, ValueError('polynomial order must be non-negative')
+    assert kwargs['order'] < kwargs['kernel_width'], ValueError('polynomial order must be less than kernel width')
+
     if transpose:
         return transformer(data.T, **dw.core.update_dict(kwargs, {'axis': axis})).T
 
@@ -68,6 +78,14 @@ def transformer(data, **kwargs):
 class Smooth(Manipulator):
     # noinspection PyShadowingBuiltins
     def __init__(self, axis=0, kernel_width=11, order=3, maintain_bounds=True):
+        # FIXED: Validate parameter compatibility in constructor
+        if order >= kernel_width:
+            import warnings
+            max_order = kernel_width - 1
+            warnings.warn(f'Reducing polynomial order from {order} to {max_order} '
+                         f'(must be less than kernel_width={kernel_width})')
+            order = max_order
+            
         required = ['axis', 'min', 'max', 'kernel_width', 'order', 'maintain_bounds']
         super().__init__(axis=axis, fitter=fitter, transformer=transformer, data=None, kernel_width=kernel_width,
                          order=order, maintain_bounds=maintain_bounds,

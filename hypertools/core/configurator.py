@@ -3,7 +3,6 @@ import datawrangler as dw
 import os
 from configparser import ConfigParser
 
-import pkg_resources
 try:
     from importlib.metadata import version
 except ImportError:
@@ -15,7 +14,11 @@ except ImportError:
 from .shared import RobustDict
 
 
-__version__ = version('hypertools')
+try:
+    __version__ = version('hypertools')
+except Exception:
+    # Fallback if package not installed
+    __version__ = '0.8.0-dev'
 
 
 def get_default_options(fname=None):

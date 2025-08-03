@@ -7,6 +7,7 @@ import seaborn as sns
 import matplotlib as mpl
 import plotly.graph_objects as go
 import plotly.io as pio
+import warnings
 
 import sys
 
@@ -95,11 +96,18 @@ def mat2colors(m, **kwargs):
     n_colors = cmap.shape[0]
 
     m = np.squeeze(np.array(m))
+    
+    # FIXED: Ensure m is at least 1-dimensional to avoid scalar issues
+    if m.ndim == 0:
+        m = np.atleast_1d(m)
+        
     if m.ndim < 2:
         _, edges = np.histogram(m, bins=n_colors - 1)
         bins = np.digitize(m, edges) - 1
 
-        colors = np.zeros([len(m), cmap.shape[1]])
+        # FIXED: Use robust size calculation instead of len() for edge cases
+        m_size = m.shape[0] if hasattr(m, 'shape') and m.ndim > 0 else 1
+        colors = np.zeros([m_size, cmap.shape[1]])
         for i in range(len(edges)):
             colors[bins == i, :] = cmap[i, :]
         return colors
@@ -420,6 +428,45 @@ def plot(original_data, *fmt, **kwargs):
 
     data = wrangle(original_data, **wrangle_kwargs)
 
+    # FIXED: Validate data dimensions for edge cases
+    if type(data) is list:
+        for i, d in enumerate(data):
+            if hasattr(d, 'shape'):
+                if d.shape[0] < 1:
+                    raise ValueError(f"Data array {i} has no samples (shape: {d.shape})")
+                if d.shape[1] < 1:
+                    raise ValueError(f"Data array {i} has no features (shape: {d.shape})")
+                if d.shape[0] == 1:
+                    warnings.warn(f"Data array {i} has only 1 sample. Some operations may be unstable.")
+                if d.shape[1] == 1:
+                    warnings.warn(f"Data array {i} has only 1 feature. Consider adding more dimensions for better visualization.")
+    else:
+        if hasattr(data, 'shape'):
+            if data.shape[0] < 1:
+                raise ValueError(f"Data has no samples (shape: {data.shape})")
+            if data.shape[1] < 1:
+                raise ValueError(f"Data has no features (shape: {data.shape})")
+            if data.shape[0] == 1:
+                warnings.warn("Data has only 1 sample. Some dimensionality reduction may fail.")
+                # FIXED: For single point data, manually reduce dimensionality if needed
+                if data.shape[1] > 3:
+                    # For single point, just take first 3 dimensions
+                    if hasattr(data, 'iloc'):  # pandas DataFrame
+                        data = data.iloc[:, :3]
+                    else:  # numpy array
+                        data = data[:, :3]
+                    warnings.warn(f"Reduced high-dimensional single point to 3D for visualization.")
+                # Override reduction setting after manual reduction  
+                kwargs['reduce'] = None
+            if data.shape[1] == 1:
+                warnings.warn("Data has only 1 feature. Duplicating feature for 2D visualization.")
+                # FIXED: Handle single feature by duplicating column for visualization
+                if hasattr(data, 'values'):  # pandas DataFrame
+                    data = pd.concat([data, data], axis=1)
+                    data.columns = ['feature_0', 'feature_0_copy']
+                else:  # numpy array
+                    data = np.hstack([data, data])
+
     pipeline = kwargs.pop('pipeline', None)
 
     pre = kwargs.pop('pre', None)
@@ -438,7 +485,27 @@ def plot(original_data, *fmt, **kwargs):
     clusterers = kwargs.pop('cluster', None)
     post = kwargs.pop('post', None)
 
-    assert len(fmt) == 0 or len(fmt) == 1 or len(fmt) == len(data), ValueError(f'invalid format: {fmt}')
+    # FIXED: Robust handling of data length for different data types
+    def get_data_length(data):
+        """Safely get the length of data, handling various data types"""
+        if type(data) is list:
+            return len(data)
+        elif hasattr(data, '__len__'):
+            try:
+                return len(data)
+            except TypeError:
+                # Fallback for objects that don't support len()
+                if hasattr(data, 'shape'):
+                    return data.shape[0]  # Number of samples
+                else:
+                    return 1  # Assume single item
+        elif hasattr(data, 'shape'):
+            return data.shape[0]
+        else:
+            return 1
+
+    data_length = get_data_length(data)
+    assert len(fmt) == 0 or len(fmt) == 1 or len(fmt) == data_length, ValueError(f'invalid format: {fmt}')
     if len(fmt) == 1:
         kwargs = dw.core.update_dict(parse_style(fmt[0]), kwargs)
 
