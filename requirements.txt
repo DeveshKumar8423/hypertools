@@ -1,7 +1,7 @@
 # Hypertools Dependencies - Updated for Modern Compatibility
 pydata-wrangler>=0.4.0  # Updated to use latest version with Polars backend support
 pandas>=1.3.0,<3.0.0    # Broad compatibility, exclude pandas 3.0 breaking changes
-numpy>=1.19.0,<2.0.0    # Stable numpy 1.x series
+numpy>=1.19.0,<3.0.0    # Support NumPy 1.x and 2.x
 
 scikit-learn>=1.0.0     # Modern sklearn with consistent API
 
