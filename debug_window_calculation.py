@@ -44,7 +44,7 @@ for i in range(min(4, len(animator.window_starts))):
         print(f"  X range: {window_data['x'].min()} -> {window_data['x'].max()}")
         print(f"  Y range: {window_data['y'].min()} -> {window_data['y'].max()}")
     else:
-        print(f"  ⚠ Empty window!")
+        print(f"  Empty window!")
 
 print("\n=== EXPECTED BEHAVIOR ===")
 print("For a sliding window animation, we should see:")

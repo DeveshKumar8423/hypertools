@@ -58,7 +58,7 @@ if len(fig.frames) > len(fig_scatter.frames):
     print(f"✓ Line animation uses {len(fig.frames)} frames (interpolated)")
     print(f"✓ Scatter animation uses {len(fig_scatter.frames)} frames (discrete)")
 else:
-    print("⚠ Frame count optimization may not be working correctly")
+    print("Frame count optimization may not be working correctly")
 
 print("\nTest files created:")
 print("- optimized_line_animation.html (smooth interpolated)")

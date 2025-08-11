@@ -39,11 +39,11 @@ try:
                    focused=1.5)       # Show 1.5 seconds of data
     
     fig1.write_html("smooth_line_animation.html")
-    print("✓ Smooth line animation created: smooth_line_animation.html")
+    print("Smooth line animation created: smooth_line_animation.html")
     print(f"  Frames: {len(fig1.frames)}")
     
 except Exception as e:
-    print(f"✗ Line animation failed: {e}")
+    print(f"Line animation failed: {e}")
 
 # Test 2: Precognitive trail animation  
 print("\n2. Testing precognitive trail animation...")
@@ -57,10 +57,10 @@ try:
                    unfocused=3.0)     # Long trailing effect
     
     fig2.write_html("precog_trail_animation.html")
-    print("✓ Precognitive animation created: precog_trail_animation.html")
+    print("Precognitive animation created: precog_trail_animation.html")
     
 except Exception as e:
-    print(f"✗ Precog animation failed: {e}")
+    print(f"Precog animation failed: {e}")
 
 # Test 3: Comparison - scatter vs line animation
 print("\n3. Creating comparison: scatter vs line...")
@@ -83,20 +83,20 @@ try:
     
     fig3b.write_html("line_animation.html")
     
-    print("✓ Comparison animations created:")
+    print("Comparison animations created:")
     print("  scatter_animation.html - scatter points")
     print("  line_animation.html - smooth lines")
     
 except Exception as e:
-    print(f"✗ Comparison failed: {e}")
+    print(f"Comparison failed: {e}")
 
 print("\n" + "="*50)
 print("ANIMATION IMPROVEMENTS SUMMARY:")
 print("="*50)
-print("✓ Fixed disappearing frames (disabled forced redraws)")
-print("✓ Added smooth transitions between frames")
-print("✓ Preserved plot mode (lines vs markers) in animations")
-print("✓ Optimized performance with better frame generation")
+print("Fixed disappearing frames (disabled forced redraws)")
+print("Added smooth transitions between frames")
+print("Preserved plot mode (lines vs markers) in animations")
+print("Optimized performance with better frame generation")
 print()
 print("Open the HTML files to see the improved animations!")
 print("- smooth_line_animation.html: Best example of improvements")

@@ -52,7 +52,7 @@ for i in range(min(4, len(fig.frames))):
             print(f"Frame {i}: {len(x_vals)} points, x={x_vals[:5]}..., y={y_vals[:5]}...")
 
 fig.write_html("debug_sliding_window.html")
-print("\n✓ Saved debug_sliding_window.html")
+print("\nSaved debug_sliding_window.html")
 
 print("\n=== ANALYSIS ===")
 print("Check debug_sliding_window.html to see:")
@@ -64,4 +64,4 @@ print("4. Are we getting proper sliding window behavior vs growing?")
 # Also test static plot for comparison
 static_fig = hyp.plot(simple_trajectory, mode='lines')
 static_fig.write_html("debug_static_reference.html")
-print("\n✓ Static reference: debug_static_reference.html")
+print("\nStatic reference: debug_static_reference.html")

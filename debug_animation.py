@@ -41,15 +41,14 @@ print(f"Unique time points: {len(combined_data.index.unique())}")
 print("\nTesting basic animation...")
 try:
     fig = hyp.plot(combined_data, animate=True)
-    print("✓ Basic animation successful")
+    print("Basic animation successful")
     print(f"Figure type: {type(fig)}")
     
     # Check if it has animation frames
     if hasattr(fig, 'frames'):
         print(f"Number of frames: {len(fig.frames) if fig.frames else 0}")
-    
 except Exception as e:
-    print(f"✗ Basic animation failed: {e}")
+    print(f"Basic animation failed: {e}")
     import traceback
     traceback.print_exc()
 
@@ -59,8 +58,8 @@ for style in styles:
     print(f"\nTesting animation style: {style}")
     try:
         fig = hyp.plot(combined_data, animate=style)
-        print(f"✓ Animation style '{style}' successful")
+        print(f"Animation style '{style}' successful")
     except Exception as e:
-        print(f"✗ Animation style '{style}' failed: {e}")
+        print(f"Animation style '{style}' failed: {e}")
         import traceback
         traceback.print_exc()

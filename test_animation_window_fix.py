@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import hypertools as hyp
 
-print("🧪 Testing Sliding Window Animation Fix")
+print("Testing Sliding Window Animation Fix")
 print("=" * 50)
 
 # Create test data with discrete timepoints
@@ -29,7 +29,7 @@ for t, values in data_dict.items():
     frames.append(frame)
 
 df = pd.concat(frames)
-print(f"✓ Created test data with {len(df)} timepoints")
+print(f"Created test data with {len(df)} timepoints")
 print(f"  Timepoints: {sorted(df.index.unique())}")
 print(f"  Data shape: {df.shape}")
 
@@ -40,13 +40,13 @@ try:
     # Create animator with window style
     animator = Animator(df, style='window', duration=3, focused=0.8)
     
-    print(f"\n📊 Animation Setup:")
+    print(f"\nAnimation Setup:")
     print(f"  Animation indices: {animator.indices[:10]}...")  # Show first 10
     print(f"  Total frames: {len(animator.indices)}")
     print(f"  Window starts: {animator.window_starts[:5]}...")  # Show first 5
     print(f"  Window ends: {animator.window_ends[:5]}...")
     
-    print(f"\n🔍 Testing Window Progression:")
+    print(f"\nTesting Window Progression:")
     
     # Test a few window positions to see if they capture different data
     test_frames = [0, len(animator.window_starts)//3, len(animator.window_starts)//2, -5]
@@ -73,24 +73,24 @@ try:
             print(f"    -> Mean values: x={mean_vals.x:.2f}, y={mean_vals.y:.2f}, z={mean_vals.z:.2f}")
         print()
     
-    print("✅ Sliding window test completed successfully!")
+    print("Sliding window test completed successfully!")
     
     # Try a simple animation
-    print("\n🎬 Testing actual animation...")
+    print("\nTesting actual animation...")
     try:
         fig = hyp.plot(df, animate=True, style='window', duration=2, save_path='test_sliding_window.html')
-        print("✅ Animation created successfully!")
+        print("Animation created successfully!")
         print("   Saved as: test_sliding_window.html")
     except Exception as e:
-        print(f"❌ Animation creation failed: {e}")
+        print(f"Animation creation failed: {e}")
         
 except Exception as e:
-    print(f"❌ Animator test failed: {e}")
+    print(f"Animator test failed: {e}")
     import traceback
     traceback.print_exc()
 
 print("\n" + "=" * 50)
-print("🎯 Test Summary:")
+print("Test Summary:")
 print("- Fixed sliding window logic should show progression through timepoints")
 print("- Each frame should capture different subsets of data")
 print("- Window should advance through time rather than staying at timepoint 0") 
